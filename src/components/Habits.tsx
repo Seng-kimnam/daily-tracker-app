@@ -3,6 +3,8 @@ import { Check, Loader2, Pencil, Plus, Trash2 } from "lucide-react"
 import { useHabits } from "@/hooks/useHabits"
 import { HabitForm } from "./HabitForm"
 import { Button } from "@/components/ui/button"
+import ErrorBoundary from "./ErrorBoundary"
+import Stats from "./Stats"
 
 function Habits() {
   const {
@@ -45,6 +47,15 @@ function Habits() {
           {habits.length}
         </span>
       </header>
+
+      {!listLoading && !listError && (
+        <ErrorBoundary
+          fallbackTitle="Stats failed to load."
+          fallbackDescription="The habit summary crashed."
+        >
+          <Stats total={habits.length} completed={completedCount} />
+        </ErrorBoundary>
+      )}
 
       <HabitForm
         loading={addLoading}

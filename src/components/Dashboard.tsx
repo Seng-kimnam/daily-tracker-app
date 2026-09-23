@@ -2,7 +2,10 @@ import { useEffect, useState } from "react"
 import { Loader2, LogOut } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
+import Avatar from "./Avatar"
+import ErrorBoundary from "./ErrorBoundary"
 import Habits from "./Habits"
+import Nav from "./Nav"
 
 const Dashboard = () => {
   const [email, setEmail] = useState<string | null>(null)
@@ -32,15 +35,30 @@ const Dashboard = () => {
   }
 
   return (
-    <main className="bg-background text-foreground mx-auto w-full max-w-xl space-y-8 p-6">
-      <header className="flex items-start justify-between gap-4 pb-2">
-        <div className="space-y-1">
-          <h1 className="text-xl font-semibold tracking-tight">
-            Daily Tracker, Hi {email || "User"}!
-          </h1>
-          <p className="text-muted-foreground text-sm">
-            Build streaks by checking in on your habits every day.
-          </p>
+    <main className="bg-background text-foreground mx-auto w-full max-w-xl space-y-6 p-6">
+      <ErrorBoundary
+        fallbackTitle="Navigation failed to load."
+        fallbackDescription="The top navigation crashed."
+      >
+        <Nav />
+      </ErrorBoundary>
+
+      <header className="flex items-center justify-between gap-4 pt-2">
+        <div className="flex items-center gap-4">
+          <ErrorBoundary
+            fallbackTitle="Avatar failed to load."
+            onRetry={() => window.location.reload()}
+          >
+            <Avatar />
+          </ErrorBoundary>
+          <div className="space-y-1">
+            <h1 className="text-2xl font-semibold tracking-tight">
+              Daily Tracker, Hi {email || "User"}!
+            </h1>
+            <p className="text-muted-foreground text-sm">
+              Build streaks by checking in on your habits every day.
+            </p>
+          </div>
         </div>
         <Button
           type="button"
@@ -64,7 +82,12 @@ const Dashboard = () => {
         </p>
       )}
 
-      <Habits />
+      <ErrorBoundary
+        fallbackTitle="Couldn't load your habits."
+        fallbackDescription="The habit list failed to render."
+      >
+        <Habits />
+      </ErrorBoundary>
     </main>
   )
 }
